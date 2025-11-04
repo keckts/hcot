@@ -1,267 +1,68 @@
-{% extends 'theme/base.html' %}
+{% extends 'theme/base_no_sidebar.html' %}
 
 {% block content %}
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-    <!-- Navbar -->
-    <c-navbar logo_text="HCOT Demo" logo_url="/">
-        <a href="#components" class="text-gray-600 hover:text-gray-900 font-medium">Components</a>
-        <a href="#interactive" class="text-gray-600 hover:text-gray-900 font-medium">Interactive</a>
-        <a href="#htmx" class="text-gray-600 hover:text-gray-900 font-medium">HTMX</a>
-        <c-gradient_button text="Get Started" href="/signup" class="text-sm" />
-    </c-navbar>
-
-    <!-- Hero Section -->
-    <div class="container mx-auto px-4 py-16 text-center">
-        <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Django Cotton Component Library
-        </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Beautiful, reusable components powered by Django Cotton, Tailwind CSS, Alpine.js, and HTMX
-        </p>
-        <div class="flex justify-center gap-4">
-            <c-badge text="Django Cotton" variant="purple" icon="true" />
-            <c-badge text="Tailwind CSS" variant="info" />
-            <c-badge text="Alpine.js" variant="success" />
-            <c-badge text="HTMX" variant="warning" />
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div class="max-w-4xl mx-auto text-center">
+        <!-- Logo/Brand -->
+        <div class="mb-8">
+            <h1 class="text-7xl font-bold text-gray-900 mb-4">
+                HCOT
+            </h1>
+            <p class="text-2xl text-gray-600 mb-8">
+                Your Modern Django Application
+            </p>
+            <p class="text-lg text-gray-500 max-w-2xl mx-auto">
+                A powerful web platform built with Django, featuring beautiful components,
+                seamless authentication, and a modern user experience.
+            </p>
         </div>
-    </div>
 
-    <!-- Alert Examples -->
-    <div class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Alert Components</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <c-alert type="success" title="Success!" dismissible="true">
-                Your changes have been saved successfully!
-            </c-alert>
-            <c-alert type="error" title="Error" dismissible="true">
-                Something went wrong. Please try again.
-            </c-alert>
-            <c-alert type="warning" title="Warning">
-                Please review your settings before continuing.
-            </c-alert>
-            <c-alert type="info" title="Information">
-                Did you know? You can customize all these components!
-            </c-alert>
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
+            <a href="{% url 'users:signup' %}"
+               class="inline-block px-8 py-4 bg-blue-600 text-white font-semibold text-lg rounded-lg shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-200 transform hover:scale-105">
+                Get Started
+            </a>
+            <a href="{% url 'users:login' %}"
+               class="inline-block px-8 py-4 bg-white text-gray-700 font-semibold text-lg rounded-lg shadow-md hover:shadow-lg border-2 border-gray-200 hover:border-gray-300 transition-all duration-200">
+                Sign In
+            </a>
         </div>
-    </div>
 
-    <!-- Cards Grid -->
-    <div id="components" class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Card Components</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <c-card
-                title="Alpine.js Magic"
-                subtitle="Interactive JavaScript"
-                button_text="Learn More"
-                button_url="#alpine">
-                Alpine.js provides reactive and declarative JavaScript for your components with minimal overhead.
-                <div class="mt-2">
-                    <c-badge text="Interactive" variant="purple" />
+        <!-- Features -->
+        <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-xl p-6 shadow-md">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
                 </div>
-            </c-card>
-
-            <c-card
-                title="HTMX Power"
-                subtitle="Dynamic Content"
-                button_text="Explore"
-                button_url="#htmx">
-                HTMX allows you to build modern UIs with simple HTML attributes - no complex JavaScript needed!
-                <div class="mt-2">
-                    <c-badge text="AJAX" variant="info" />
-                </div>
-            </c-card>
-
-            <c-card
-                title="Tailwind CSS"
-                subtitle="Utility-First Styling"
-                button_text="View Docs"
-                button_url="#tailwind">
-                Build beautiful designs quickly with Tailwind's comprehensive utility classes.
-                <div class="mt-2">
-                    <c-badge text="Styling" variant="success" />
-                </div>
-            </c-card>
-        </div>
-    </div>
-
-    <!-- Alpine.js Interactive Demo -->
-    <div id="interactive" class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Alpine.js Interactive Features</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Counter Demo -->
-            <div class="bg-white rounded-lg shadow-md p-6" x-data="{ count: 0 }">
-                <h3 class="text-xl font-bold mb-4">Alpine.js Counter</h3>
-                <p class="text-gray-600 mb-4">Click the buttons to increment or decrement the counter</p>
-                <div class="flex items-center justify-center space-x-4 mb-4">
-                    <button @click="count--" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
-                        - Decrease
-                    </button>
-                    <div class="text-4xl font-bold text-blue-600" x-text="count"></div>
-                    <button @click="count++" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
-                        + Increase
-                    </button>
-                </div>
-                <button @click="count = 0" class="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
-                    Reset
-                </button>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Fast & Secure</h3>
+                <p class="text-gray-600 text-sm">Built with Django for reliability and security you can trust.</p>
             </div>
 
-            <!-- Toggle Demo -->
-            <div class="bg-white rounded-lg shadow-md p-6" x-data="{ enabled: false }">
-                <h3 class="text-xl font-bold mb-4">Toggle Switch</h3>
-                <p class="text-gray-600 mb-4">Click to toggle the feature on or off</p>
-                <div class="flex items-center justify-center mb-4">
-                    <button
-                        @click="enabled = !enabled"
-                        :class="enabled ? 'bg-green-500' : 'bg-gray-300'"
-                        class="relative inline-flex h-12 w-24 items-center rounded-full transition-colors">
-                        <span
-                            :class="enabled ? 'translate-x-14' : 'translate-x-1'"
-                            class="inline-block h-10 w-10 transform rounded-full bg-white transition-transform shadow-lg">
-                        </span>
-                    </button>
+            <div class="bg-white rounded-xl p-6 shadow-md">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                    </svg>
                 </div>
-                <div class="text-center">
-                    <c-badge :text="enabled ? 'Enabled' : 'Disabled'" :variant="enabled ? 'success' : 'error'" />
-                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Beautiful Design</h3>
+                <p class="text-gray-600 text-sm">Modern UI with Tailwind CSS for a stunning experience.</p>
             </div>
-        </div>
-    </div>
 
-    <!-- Accordion Section -->
-    <div class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Accordion Components</h2>
-        <div class="space-y-4 max-w-3xl mx-auto">
-            <c-accordion title="What is Django Cotton?" open="true">
-                Django Cotton is a powerful library for building reusable component-based templates in Django.
-                It allows you to create self-contained UI components that can be easily reused throughout your project.
-            </c-accordion>
-
-            <c-accordion title="How does Alpine.js work?">
-                Alpine.js is a lightweight JavaScript framework that adds reactive and declarative behavior to your markup.
-                It's perfect for adding interactivity without the complexity of larger frameworks.
-            </c-accordion>
-
-            <c-accordion title="Why use HTMX?">
-                HTMX allows you to access modern browser features directly from HTML, rather than using JavaScript.
-                This makes it incredibly easy to build dynamic, AJAX-powered applications with minimal code.
-            </c-accordion>
-        </div>
-    </div>
-
-    <!-- Modal Demo -->
-    <div class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Modal Component</h2>
-        <div class="flex justify-center">
-            <c-modal
-                trigger_text="Open Modal Demo"
-                title="Welcome to the Modal!"
-                confirm_text="Got it!">
-                <div class="space-y-4">
-                    <p class="text-gray-700">
-                        This is a fully functional modal powered by Alpine.js. It features:
-                    </p>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2">
-                        <li>Smooth transitions and animations</li>
-                        <li>Click outside to close</li>
-                        <li>Escape key support</li>
-                        <li>Customizable content and buttons</li>
-                    </ul>
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <c-alert type="info" title="Pro Tip">
-                            You can nest any content inside the modal, including other components!
-                        </c-alert>
-                    </div>
+            <div class="bg-white rounded-xl p-6 shadow-md">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
                 </div>
-            </c-modal>
-        </div>
-    </div>
-
-    <!-- HTMX Demo -->
-    <div id="htmx" class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">HTMX Dynamic Content</h2>
-        <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-            <h3 class="text-xl font-bold mb-4">Click Counter (HTMX Simulation)</h3>
-            <p class="text-gray-600 mb-4">This demonstrates how HTMX can update content dynamically</p>
-
-            <div class="space-y-4">
-                <div id="click-result" class="bg-gray-100 p-4 rounded-lg text-center" x-data="{ clicks: 0 }">
-                    <p class="text-2xl font-bold text-blue-600" x-text="'Clicks: ' + clicks"></p>
-                    <button
-                        @click="clicks++"
-                        class="mt-2 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        Click Me! (HTMX Style)
-                    </button>
-                </div>
-
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
-                    <p class="text-sm text-gray-700">
-                        <strong>Note:</strong> In a real application, this would make an AJAX request to your Django backend
-                        using HTMX attributes like <code class="bg-gray-200 px-1 rounded">hx-post</code>,
-                        <code class="bg-gray-200 px-1 rounded">hx-get</code>, etc.
-                    </p>
-                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Easy Authentication</h3>
+                <p class="text-gray-600 text-sm">Simple signup and login with Google OAuth support.</p>
             </div>
-        </div>
-    </div>
-
-    <!-- Form Example -->
-    <div class="container mx-auto px-4 mb-12">
-        <h2 class="text-3xl font-bold mb-6 text-gray-800">Form Components</h2>
-        <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-            <form class="space-y-4">
-                <c-input
-                    name="fullname"
-                    label="Full Name"
-                    type="text"
-                    placeholder="John Doe"
-                    required="true"
-                    help_text="Enter your first and last name" />
-
-                <c-input
-                    name="email"
-                    label="Email Address"
-                    type="email"
-                    placeholder="you@example.com"
-                    required="true" />
-
-                <c-input
-                    name="message"
-                    label="Message"
-                    type="text"
-                    placeholder="Tell us what you think..." />
-
-                <div class="flex gap-2">
-                    <c-gradient_button
-                        text="Submit Form"
-                        href="#"
-                        gradient_from="from-blue-500"
-                        gradient_to="to-purple-500"
-                        class="shadow-lg" />
-                    <button type="reset" class="px-6 py-3 bg-gray-200 text-gray-800 font-bold rounded-lg hover:bg-gray-300 transition-colors">
-                        Reset
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="container mx-auto px-4 py-8 text-center">
-        <p class="text-gray-600 mb-4">
-            Check out <code class="bg-gray-200 px-2 py-1 rounded">templates/cotton/COMPONENTS.md</code> for full documentation!
-        </p>
-        <div class="flex justify-center gap-2">
-            <c-badge text="Django" variant="success" />
-            <c-badge text="Cotton" variant="purple" />
-            <c-badge text="Tailwind" variant="info" />
-            <c-badge text="Alpine.js" variant="warning" />
-            <c-badge text="HTMX" variant="error" />
         </div>
     </div>
 </div>
 
 {% endblock %}
-
