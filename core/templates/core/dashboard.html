@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{% load viewcomponent_tags %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@2.0.8"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Optional: DaisyUI / Tailwind CDN if needed later -->
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+</head>
+<body>
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Component Comparison</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <!-- Django ViewComponent Example -->
+        <div class="border border-gray-300 rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Django ViewComponent</h2>
+            <p class="text-sm text-gray-600 mb-4">Python class-based components</p>
+            <div class="space-y-4">
+                {% component "gradient_button" text="Click Me" href="/signup" gradient_from="from-blue-500" gradient_to="to-green-500" extra_classes="shadow-lg hover:scale-105 transition-transform" %}
+                {% endcomponent %}
+
+                {% component "gradient_button" text="Learn More" href="/about" gradient_from="from-purple-500" gradient_to="to-pink-500" extra_classes="shadow-md" %}
+                {% endcomponent %}
+
+                {% component "gradient_button" text="Get Started" href="/start" gradient_from="from-orange-500" gradient_to="to-red-500" %}
+                {% endcomponent %}
+            </div>
+        </div>
+
+        <!-- Django Cotton Example -->
+        <div class="border border-gray-300 rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Django Cotton</h2>
+            <p class="text-sm text-gray-600 mb-4">Template-based components</p>
+            <div class="space-y-4">
+                <c-gradient_button
+                    text="Click Me"
+                    href="/signup"
+                    gradient_from="from-blue-500"
+                    gradient_to="to-green-500"
+                    class="shadow-lg hover:scale-105 transition-transform" />
+
+                <c-gradient_button
+                    text="Learn More"
+                    href="/about"
+                    gradient_from="from-purple-500"
+                    gradient_to="to-pink-500"
+                    class="shadow-md" />
+
+                <c-gradient_button
+                    text="Get Started"
+                    href="/start"
+                    gradient_from="from-orange-500"
+                    gradient_to="to-red-500" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Info -->
+    <div class="border border-gray-300 rounded-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Key Differences</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-semibold text-lg mb-2">Django ViewComponent</h3>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li>Python class-based components</li>
+                    <li>Can include complex logic</li>
+                    <li>Uses extra_classes parameter</li>
+                    <li>Registered with @component.register</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-semibold text-lg mb-2">Django Cotton</h3>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li>Pure template components</li>
+                    <li>Simple and lightweight</li>
+                    <li>Uses class attribute</li>
+                    <li>HTML-like syntax</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

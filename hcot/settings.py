@@ -25,10 +25,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # styling
     "tailwind",
     "theme",
+    # apps
     "core",
+    "components",
+    # third party
     "django_cotton",
+    "django_viewcomponent",
 ]
 
 MIDDLEWARE = [
@@ -43,11 +48,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "hcot.urls"
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
+        "DIRS": [],  # global templates
+        "APP_DIRS": False,  # must be False if you define loaders
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
