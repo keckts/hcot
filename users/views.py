@@ -13,24 +13,23 @@ from .models import Profile
 
 
 def signup_view(request):
-    """Handle user signup with email."""
-    # Redirect if already authenticated
+    """
+    User signup view with email-based authentication.
+
+    GET: Display signup form
+    POST: Process signup form, create user, and log them in
+
+    Redirects authenticated users to dashboard.
+    """
     if request.user.is_authenticated:
         return redirect("dashboard")
 
     if request.method == "POST":
         form = EmailSignupForm(request.POST)
         if form.is_valid():
-            # Create the user
             user = form.save()
-
-            # Log the user in
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-
-            # Success message
-            messages.success(request, f"Welcome! Your account has been created.")
-
-            # Redirect to dashboard
+            messages.success(request, "Welcome! Your account has been created.")
             return redirect("dashboard")
     else:
         form = EmailSignupForm()
@@ -39,34 +38,32 @@ def signup_view(request):
 
 
 def login_view(request):
-    """Handle user login with email."""
-    # Redirect if already authenticated
+    """
+    User login view with email-based authentication.
+
+    GET: Display login form
+    POST: Authenticate user by email and password, then log them in
+
+    Redirects authenticated users to dashboard.
+    """
     if request.user.is_authenticated:
         return redirect("dashboard")
 
     if request.method == "POST":
         form = EmailLoginForm(request.POST)
         if form.is_valid():
-            # Get email and password from form
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
 
-            # Get user by email
             try:
                 user_obj = User.objects.get(email=email)
-                # Authenticate using username (which is set to email)
                 user = authenticate(username=user_obj.username, password=password)
             except User.DoesNotExist:
                 user = None
 
             if user is not None:
-                # Log the user in
                 login(request, user)
-
-                # Success message
                 messages.success(request, "Welcome back!")
-
-                # Redirect to dashboard
                 return redirect("dashboard")
             else:
                 messages.error(request, "Invalid email or password.")
@@ -77,14 +74,23 @@ def login_view(request):
 
 
 def logout_view(request):
-    """Handle user logout."""
+    """
+    User logout view.
+
+    Logs out the current user and redirects to homepage.
+    """
     logout(request)
     messages.success(request, "You have been logged out successfully.")
     return redirect("index")
 
 
 class SettingsView(LoginRequiredMixin, UpdateView):
-    """View for user settings and profile editing."""
+    """
+    User settings and profile editing view.
+
+    Allows authenticated users to view and update their profile information
+    including name, email, bio, location, and birth date.
+    """
 
     model = Profile
     form_class = ProfileForm
@@ -92,35 +98,67 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("users:settings")
 
     def get_object(self, queryset=None):
-        """Get or create the profile for the current user."""
+        """
+        Get or create the profile for the current user.
+
+        Returns:
+            Profile: The user's profile object
+        """
         profile, created = Profile.objects.get_or_create(user=self.request.user)
         return profile
 
     def form_valid(self, form):
-        """Handle successful form submission."""
+        """
+        Handle successful form submission.
+
+        Args:
+            form: The validated ProfileForm
+
+        Returns:
+            HttpResponse: Redirect to success URL
+        """
         messages.success(self.request, "Your profile has been updated successfully!")
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        """Handle invalid form submission."""
+        """
+        Handle invalid form submission.
+
+        Args:
+            form: The invalid ProfileForm
+
+        Returns:
+            HttpResponse: Re-render form with errors
+        """
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
 
 
 class DeleteAccountView(LoginRequiredMixin, View):
-    """View for deleting user account."""
+    """
+    Account deletion view.
+
+    Allows authenticated users to permanently delete their account
+    and all associated data.
+    """
 
     def post(self, request):
-        """Handle account deletion."""
-        user = request.user
-        username = user.username
+        """
+        Handle account deletion request.
 
-        # Logout and delete the user
+        Logs out the user, deletes their account, and redirects to homepage.
+
+        Args:
+            request: The HTTP request
+
+        Returns:
+            HttpResponse: Redirect to index page
+        """
+        user = request.user
+        email = user.email
+
         logout(request)
         user.delete()
 
-        # Success message
-        messages.success(request, f"Account '{username}' has been permanently deleted.")
-
-        # Redirect to index
+        messages.success(request, f"Account '{email}' has been permanently deleted.")
         return redirect("index")

@@ -5,6 +5,10 @@ from django.core.exceptions import ValidationError
 
 from .models import Profile
 
+# Common styling for all inputs
+
+BASE_INPUT_STYLE = "input input-bordered border border-gray-300 w-full bg-white text-black placeholder-gray-500"
+
 
 class EmailSignupForm(UserCreationForm):
     """Custom signup form using email instead of username."""
@@ -13,7 +17,7 @@ class EmailSignupForm(UserCreationForm):
         required=True,
         widget=forms.EmailInput(
             attrs={
-                "class": "input input-bordered w-full",
+                "class": BASE_INPUT_STYLE,
                 "placeholder": "Email address",
                 "autofocus": True,
             }
@@ -23,7 +27,7 @@ class EmailSignupForm(UserCreationForm):
         label="Password",
         widget=forms.PasswordInput(
             attrs={
-                "class": "input input-bordered w-full",
+                "class": BASE_INPUT_STYLE,
                 "placeholder": "Password",
             }
         ),
@@ -32,7 +36,7 @@ class EmailSignupForm(UserCreationForm):
         label="Confirm Password",
         widget=forms.PasswordInput(
             attrs={
-                "class": "input input-bordered w-full",
+                "class": BASE_INPUT_STYLE,
                 "placeholder": "Confirm password",
             }
         ),
@@ -53,8 +57,7 @@ class EmailSignupForm(UserCreationForm):
         """Save user with email as username."""
         user = super().save(commit=False)
         user.email = self.cleaned_data["email"]
-        # Use email as username (required field in Django)
-        user.username = self.cleaned_data["email"]
+        user.username = self.cleaned_data["email"]  # Use email as username
         if commit:
             user.save()
         return user
@@ -66,7 +69,7 @@ class EmailLoginForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
-                "class": "input input-bordered w-full",
+                "class": BASE_INPUT_STYLE,
                 "placeholder": "Email address",
                 "autofocus": True,
             }
@@ -75,7 +78,7 @@ class EmailLoginForm(forms.Form):
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                "class": "input input-bordered w-full",
+                "class": BASE_INPUT_STYLE,
                 "placeholder": "Password",
             }
         ),
