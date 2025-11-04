@@ -3,15 +3,87 @@
 A collection of reusable UI components built with Django Cotton, Tailwind CSS, Alpine.js, and HTMX.
 
 ## Table of Contents
-1. [Card](#card)
-2. [Gradient Button](#gradient-button)
-3. [Alert](#alert)
-4. [Badge](#badge)
-5. [Modal](#modal)
-6. [Input](#input)
-7. [Navbar](#navbar)
-8. [Accordion](#accordion)
-9. [Loading Button](#loading-button)
+1. [Toast Notifications](#toast-notifications) ⭐ NEW
+2. [Card](#card)
+3. [Gradient Button](#gradient-button)
+4. [Alert](#alert)
+5. [Badge](#badge)
+6. [Modal](#modal)
+7. [Input](#input)
+8. [Navbar](#navbar)
+9. [Accordion](#accordion)
+10. [Loading Button](#loading-button)
+
+---
+
+## Toast Notifications
+
+A beautiful toast notification system that automatically displays Django messages in the bottom-right corner with smooth animations.
+
+**Requires:** Alpine.js
+
+### Features
+- Smooth slide-in/fade animations
+- Auto-dismiss after 5 seconds (customizable)
+- Multiple types: success, error, warning, info
+- Automatic Django messages integration
+- Manual dismiss button
+- Programmatic JavaScript API
+
+### Components
+
+#### `<c-notifications />`
+Main container that automatically displays Django messages as toasts.
+
+**Usage in base.html:**
+```html
+<body>
+    <c-notifications />
+    <!-- rest of your content -->
+</body>
+```
+
+#### `<c-toast />`
+Individual toast notification.
+
+**Props:**
+- `type` - Toast type: 'success', 'error', 'warning', 'info' (default: 'info')
+- `title` - Toast title (optional)
+- `message` - Toast message (required)
+- `duration` - Duration in ms before auto-dismiss (default: 5000)
+
+### Usage Examples
+
+**In Django Views:**
+```python
+from django.contrib import messages
+
+messages.success(request, "Profile updated successfully!")
+messages.error(request, "Something went wrong.")
+messages.warning(request, "Please review your settings.")
+messages.info(request, "Your session expires in 5 minutes.")
+```
+
+**Programmatically (JavaScript):**
+```javascript
+// Basic
+showToast('success', 'Operation completed!');
+
+// With title
+showToast('error', 'Unable to save.', 'Error');
+
+// Custom duration
+showToast('info', 'Loading...', '', 3000);
+```
+
+**Manual Component:**
+```html
+<c-toast type="success" message="Your changes have been saved." />
+<c-toast type="error" title="Error" message="Something went wrong." />
+<c-toast type="warning" duration="10000">Custom message with slot</c-toast>
+```
+
+For full documentation, see `NOTIFICATION_SYSTEM.md`.
 
 ---
 

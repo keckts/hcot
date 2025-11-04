@@ -108,15 +108,6 @@ class ProfileForm(forms.ModelForm):
             }
         ),
     )
-    email = forms.EmailField(
-        required=False,
-        widget=forms.EmailInput(
-            attrs={
-                "class": "input input-bordered w-full",
-                "placeholder": "Email address",
-            }
-        ),
-    )
 
     class Meta:
         model = Profile
@@ -148,15 +139,13 @@ class ProfileForm(forms.ModelForm):
         if self.instance and self.instance.user:
             self.fields["first_name"].initial = self.instance.user.first_name
             self.fields["last_name"].initial = self.instance.user.last_name
-            self.fields["email"].initial = self.instance.user.email
 
     def save(self, commit=True):
         profile = super().save(commit=False)
 
-        # Update user fields
+        # Update user fields (but not email, which is read-only)
         profile.user.first_name = self.cleaned_data["first_name"]
         profile.user.last_name = self.cleaned_data["last_name"]
-        profile.user.email = self.cleaned_data["email"]
 
         if commit:
             profile.user.save()

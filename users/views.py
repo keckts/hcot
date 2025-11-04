@@ -97,6 +97,14 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = "users/settings.html"
     success_url = reverse_lazy("users:settings")
 
+    def dispatch(self, request, *args, **kwargs):
+        # clear old messages
+        storage = messages.get_messages(request)
+        list(storage)  # Iterate through the storage to clear old messages
+        storage.used = True
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_object(self, queryset=None):
         """
         Get or create the profile for the current user.
