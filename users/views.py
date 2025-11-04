@@ -1,25 +1,25 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView
 
-from .forms import ProfileForm
+from .forms import EmailLoginForm, EmailSignupForm, ProfileForm
 from .models import Profile
 
 
 def signup_view(request):
-    """Handle user signup."""
+    """Handle user signup with email."""
     # Redirect if already authenticated
     if request.user.is_authenticated:
         return redirect("dashboard")
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = EmailSignupForm(request.POST)
         if form.is_valid():
             # Create the user
             user = form.save()
@@ -28,43 +28,50 @@ def signup_view(request):
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
             # Success message
-            messages.success(request, f"Welcome, {user.username}! Your account has been created.")
+            messages.success(request, f"Welcome! Your account has been created.")
 
             # Redirect to dashboard
             return redirect("dashboard")
     else:
-        form = UserCreationForm()
+        form = EmailSignupForm()
 
     return render(request, "users/signup.html", {"form": form})
 
 
 def login_view(request):
-    """Handle user login."""
+    """Handle user login with email."""
     # Redirect if already authenticated
     if request.user.is_authenticated:
         return redirect("dashboard")
 
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = EmailLoginForm(request.POST)
         if form.is_valid():
-            # Get username and password from form
-            username = form.cleaned_data.get("username")
+            # Get email and password from form
+            email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
 
-            # Authenticate user
-            user = authenticate(username=username, password=password)
+            # Get user by email
+            try:
+                user_obj = User.objects.get(email=email)
+                # Authenticate using username (which is set to email)
+                user = authenticate(username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                user = None
 
             if user is not None:
                 # Log the user in
                 login(request, user)
 
                 # Success message
-                messages.success(request, f"Welcome back, {username}!")
+                messages.success(request, "Welcome back!")
 
                 # Redirect to dashboard
                 return redirect("dashboard")
+            else:
+                messages.error(request, "Invalid email or password.")
     else:
-        form = AuthenticationForm()
+        form = EmailLoginForm()
 
     return render(request, "users/login.html", {"form": form})
 

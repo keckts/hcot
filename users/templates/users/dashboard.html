@@ -14,9 +14,9 @@
 
                 <!-- User Menu -->
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">{{ user.username }}</span>
+                    <span class="text-gray-600">{{ user.email }}</span>
                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {{ user.username.0|upper }}
+                        {{ user.email.0|upper }}
                     </div>
                     <a href="{% url 'users:logout' %}"
                        class="text-gray-600 hover:text-gray-900 font-medium">
@@ -32,7 +32,7 @@
         <!-- Welcome Section -->
         <div class="mb-12">
             <h2 class="text-4xl font-bold text-gray-900 mb-2">
-                Welcome back, {{ user.username }}! 👋
+                Welcome back! 👋
             </h2>
             <p class="text-gray-600 text-lg">Here's what's happening with your account today.</p>
         </div>
@@ -94,7 +94,7 @@
                 </div>
                 <h3 class="text-sm font-medium text-gray-500 mb-1">Login Method</h3>
                 <p class="text-2xl font-bold text-gray-900">Standard</p>
-                <p class="text-sm text-gray-600 mt-2">Username & password</p>
+                <p class="text-sm text-gray-600 mt-2">Email & password</p>
             </div>
         </div>
 
@@ -138,8 +138,8 @@
             <h3 class="text-2xl font-bold text-gray-900 mb-6">Account Information</h3>
             <div class="space-y-4">
                 <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                    <span class="text-gray-600 font-medium">Username</span>
-                    <span class="text-gray-900 font-semibold">{{ user.username }}</span>
+                    <span class="text-gray-600 font-medium">Email</span>
+                    <span class="text-gray-900 font-semibold">{{ user.email }}</span>
                 </div>
                 <div class="flex justify-between items-center py-3 border-b border-gray-100">
                     <span class="text-gray-600 font-medium">Account Type</span>

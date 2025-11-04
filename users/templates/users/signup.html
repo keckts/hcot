@@ -54,35 +54,20 @@
                 {% csrf_token %}
 
                 <div class="mb-4">
-                    <label for="id_username" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Username <span class="text-red-500">*</span>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email <span class="text-red-500">*</span>
                     </label>
-                    <input
-                        type="text"
-                        id="id_username"
-                        name="username"
-                        placeholder="Choose a username"
-                        required
-                        value="{{ form.username.value|default:'' }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 bg-white"
-                    >
-                    {% if form.username.errors %}
-                        <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
                     {% endif %}
                 </div>
 
                 <div class="mb-4">
-                    <label for="id_password1" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
                         Password <span class="text-red-500">*</span>
                     </label>
-                    <input
-                        type="password"
-                        id="id_password1"
-                        name="password1"
-                        placeholder="••••••••"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 bg-white"
-                    >
+                    {{ form.password1 }}
                     {% if form.password1.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
                     {% else %}
@@ -91,17 +76,10 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="id_password2" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
                         Confirm Password <span class="text-red-500">*</span>
                     </label>
-                    <input
-                        type="password"
-                        id="id_password2"
-                        name="password2"
-                        placeholder="••••••••"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-gray-900 bg-white"
-                    >
+                    {{ form.password2 }}
                     {% if form.password2.errors %}
                         <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
                     {% endif %}
