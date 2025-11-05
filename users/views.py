@@ -63,7 +63,6 @@ def login_view(request):
 
             if user is not None:
                 login(request, user)
-                messages.success(request, "Welcome back!")
                 return redirect("dashboard")
             else:
                 messages.error(request, "Invalid email or password.")
@@ -80,7 +79,6 @@ def logout_view(request):
     Logs out the current user and redirects to homepage.
     """
     logout(request)
-    messages.success(request, "You have been logged out successfully.")
     return redirect("index")
 
 

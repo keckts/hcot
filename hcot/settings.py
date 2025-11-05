@@ -203,8 +203,36 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# ==============================================================================
+# EMAIL SETTINGS
+# ==============================================================================
+
+# Email backend configuration
+# Development: Use console backend (prints emails to console)
+# Production: Use SMTP backend with your email service
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+    EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+    EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+    DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@example.com")
+    SERVER_EMAIL = config("SERVER_EMAIL", default="noreply@example.com")
+
+# Default "from" email for development
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@localhost")
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",  # your project-level static folder
 ]
+
+SESSION_COOKIE_AGE = 1209600  # Two weeks in seconds
+
+# Whether the session should expire when the user closes their browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# Make cookies only accessible via HTTP(S), not JavaScript (recommended)
+SESSION_COOKIE_HTTPONLY = True
