@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from decouple import Csv, config
@@ -335,3 +336,6 @@ SESSION_COOKIE_HTTPONLY = config("SESSION_COOKIE_HTTPONLY", default=True, cast=b
 PROJECT_NAME = config(
     "PROJECT_NAME", default="hcot"
 )  # change to whatever you want, this is mostly used for frontend
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
