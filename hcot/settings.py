@@ -95,15 +95,57 @@ TEMPLATES = [
 WSGI_APPLICATION = "hcot.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# ==============================================================================
+# DATABASE CONFIGURATION
+# ==============================================================================
+# Supports both SQLite (default) and PostgreSQL
+# Switch between databases by setting DATABASE_ENGINE in .env
+#
+# SQLite (default - no configuration needed):
+#   - Perfect for development
+#   - No additional setup required
+#   - Database file: db.sqlite3
+#
+# PostgreSQL (production recommended):
+#   - Set DATABASE_ENGINE=postgresql in .env
+#   - Configure DATABASE_NAME, DATABASE_USER, DATABASE_PASSWORD, etc.
+#   - Requires psycopg2-binary: pip install psycopg2-binary
+# ==============================================================================
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Get database engine from environment (defaults to sqlite3)
+DATABASE_ENGINE = config("DATABASE_ENGINE", default="sqlite3")
+
+if DATABASE_ENGINE == "postgresql":
+    # PostgreSQL Configuration
+    # Requires: pip install psycopg2-binary
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DATABASE_NAME", default="hcot_db"),
+            "USER": config("DATABASE_USER", default="postgres"),
+            "PASSWORD": config("DATABASE_PASSWORD", default=""),
+            "HOST": config("DATABASE_HOST", default="localhost"),
+            "PORT": config("DATABASE_PORT", default="5432", cast=int),
+            # Optional PostgreSQL-specific settings
+            "OPTIONS": {
+                # Connection timeout in seconds
+                "connect_timeout": config(
+                    "DATABASE_CONNECT_TIMEOUT", default=10, cast=int
+                ),
+                # Other options can be added here as needed
+                # Example: "sslmode": "require" for SSL connections
+            },
+        }
     }
-}
+else:
+    # SQLite Configuration (default)
+    # No additional configuration needed
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation

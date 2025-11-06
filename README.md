@@ -165,8 +165,110 @@ For production, create a `.env` file (see `.env.example`):
 SECRET_KEY=your-secret-key-here
 DEBUG=False
 ALLOWED_HOSTS=yourdomain.com
-DATABASE_URL=your-database-url
 ```
+
+### Database Configuration
+
+The project supports both **SQLite** (default) and **PostgreSQL** databases. You can switch between them without changing any Python code—just edit your `.env` file!
+
+#### Option 1: SQLite (Default - Development)
+
+SQLite is perfect for development and comes pre-configured. No additional setup needed!
+
+**Advantages:**
+- ✅ Zero configuration
+- ✅ No installation required
+- ✅ Perfect for development and testing
+- ✅ Database stored as a single file (`db.sqlite3`)
+
+**Usage:**
+```env
+# In your .env file (or leave it out entirely - it's the default)
+DATABASE_ENGINE=sqlite3
+```
+
+#### Option 2: PostgreSQL (Recommended for Production)
+
+PostgreSQL is a powerful, production-ready database with better performance and features for production environments.
+
+**Prerequisites:**
+1. Install PostgreSQL: [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
+2. Install the Python PostgreSQL driver:
+   ```bash
+   pip install psycopg2-binary
+   ```
+
+**Setup Steps:**
+
+1. **Create the PostgreSQL database and user**
+
+   Open PostgreSQL terminal (psql):
+   ```bash
+   # macOS/Linux
+   psql -U postgres
+
+   # Windows
+   # Use pgAdmin or psql from the Start Menu
+   ```
+
+   Run these SQL commands:
+   ```sql
+   CREATE DATABASE hcot_db;
+   CREATE USER hcot_user WITH PASSWORD 'your_secure_password';
+   GRANT ALL PRIVILEGES ON DATABASE hcot_db TO hcot_user;
+   ALTER DATABASE hcot_db OWNER TO hcot_user;
+   \q
+   ```
+
+2. **Configure your `.env` file**
+
+   Update your `.env` file with your PostgreSQL credentials:
+   ```env
+   # Database Configuration
+   DATABASE_ENGINE=postgresql
+
+   # PostgreSQL Settings
+   DATABASE_NAME=hcot_db
+   DATABASE_USER=hcot_user
+   DATABASE_PASSWORD=your_secure_password
+   DATABASE_HOST=localhost
+   DATABASE_PORT=5432
+   DATABASE_CONNECT_TIMEOUT=10
+   ```
+
+3. **Run migrations**
+   ```bash
+   python manage.py migrate
+   ```
+
+**Connection Options:**
+
+The configuration includes several PostgreSQL-specific options:
+
+- `DATABASE_NAME`: Name of your database (default: `hcot_db`)
+- `DATABASE_USER`: PostgreSQL username (default: `postgres`)
+- `DATABASE_PASSWORD`: User password (required for PostgreSQL)
+- `DATABASE_HOST`: Database server address (default: `localhost`)
+- `DATABASE_PORT`: PostgreSQL port (default: `5432`)
+- `DATABASE_CONNECT_TIMEOUT`: Connection timeout in seconds (default: `10`)
+
+**Switching Between Databases:**
+
+You can easily switch between SQLite and PostgreSQL by changing one line in your `.env` file:
+
+```env
+# Use SQLite (development)
+DATABASE_ENGINE=sqlite3
+
+# Use PostgreSQL (production)
+DATABASE_ENGINE=postgresql
+```
+
+**Important Notes:**
+- ⚠️ Switching databases requires running migrations again
+- ⚠️ Data is NOT automatically transferred between databases
+- ⚠️ Make sure to backup your database before switching
+- 💡 Use SQLite for development, PostgreSQL for production
 
 ### Email Backend (Optional)
 
@@ -277,8 +379,12 @@ Created by **Henry Sheffield**
 - Check that you're editing `input.css`, not `dist/styles.css`
 
 ### Database errors
-- Delete `db.sqlite3` and run migrations again
-- Check that all migrations are applied
+- **SQLite**: Delete `db.sqlite3` and run migrations again
+- **PostgreSQL**: Check credentials in `.env` file
+- **PostgreSQL**: Verify database exists: `psql -U postgres -l`
+- **PostgreSQL**: Ensure `psycopg2-binary` is installed: `pip install psycopg2-binary`
+- Check that all migrations are applied: `python manage.py showmigrations`
+- Test database connection: `python manage.py dbshell`
 
 ### Import errors
 - Ensure virtual environment is activated
