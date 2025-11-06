@@ -175,7 +175,7 @@ This boilerplate is **highly customizable** through environment variables. All c
 
 2. **Edit `.env` and customize your settings:**
    ```bash
-   nano .env  # or use your favorite editor
+   nano .env  # or use your favorite editor (i use neovim btw)
    ```
 
 3. **Key settings to update:**
