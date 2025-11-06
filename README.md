@@ -29,6 +29,7 @@ Extra guides can be found in the guides directory if needed.
 
 - Python 3.8 or higher
 - pip (Python package manager)
+- Node.js and npm (for TailwindCSS) - Download from [https://nodejs.org/](https://nodejs.org/)
 - Git (optional, for cloning)
 
 ### Installation
@@ -84,27 +85,40 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-7. **Install and configure TailwindCSS + DaisyUI (for macOS)**
+7. **Install Node.js dependencies and build TailwindCSS**
+
+**Prerequisites:** Make sure you have Node.js and npm installed. Download from [https://nodejs.org/](https://nodejs.org/) if needed.
 
 ```bash
-# Navigate to theme static CSS directory
-cd theme/static/css
+# Navigate to theme static source directory
+cd theme/static_src
 
-# Download DaisyUI and TailwindCSS
-curl -sL daisyui.com/fast | bash
+# Install npm dependencies (TailwindCSS v4, DaisyUI, PostCSS)
+npm install
 
-# Build CSS (run in a separate terminal to watch for changes)
-./tailwindcss -i input.css -o dist/styles.css --watch
+# Build CSS for production (one-time build)
+npm run build
+
+# OR run in development mode with watch (recommended during development)
+# This will automatically rebuild CSS when you change templates or styles
+npm run dev
 ```
 
-For other operating systems, download TailwindCSS from [https://tailwindcss.com/blog/standalone-cli](https://tailwindcss.com/blog/standalone-cli)
+**Note:** If you run `npm run dev`, keep this terminal running. It will watch for changes and rebuild your CSS automatically.
 
 8. **Run the development server**
 
 ```bash
-# In a new terminal (keep TailwindCSS watch running in another)
+# Open a new terminal and navigate back to project root
+cd ../..
+
+# Run the Django development server
 python manage.py runserver
 ```
+
+**Tip:** During development, keep both terminals running:
+- Terminal 1: `npm run dev` (in `theme/static_src/` directory)
+- Terminal 2: `python manage.py runserver` (in project root)
 
 9. **Open your browser**
 
@@ -125,7 +139,10 @@ yourprojectname/
 │   ├── models.py          # User Profile model
 │   └── views.py           # Authentication views
 ├── theme/                  # Theme and base templates
-│   ├── static/css/        # TailwindCSS configuration
+│   ├── static/css/dist/   # Compiled CSS output
+│   ├── static_src/        # TailwindCSS source files
+│   │   ├── src/styles.css # Main Tailwind/DaisyUI config
+│   │   └── package.json   # npm dependencies
 │   └── templates/
 │       └── theme/
 │           └── base.html  # Base template with sidebar
@@ -149,9 +166,11 @@ python rename_project.py mynewproject
 
 ### Customizing Styles
 
-1. Edit `theme/static/css/input.css` for global styles
-2. Modify DaisyUI theme in `theme/static/css/tailwind.config.js`
+1. Edit `theme/static_src/src/styles.css` for global styles and Tailwind configuration
+2. Configure DaisyUI themes and plugins directly in `styles.css` using `@config` directive
 3. Use TailwindCSS utility classes directly in templates
+4. After making changes, CSS will rebuild automatically if `npm run dev` is running
+5. For production, run `npm run build` from the `theme/static_src/` directory
 
 ### Adding New Features
 
@@ -547,17 +566,22 @@ Created by **Henry Sheffield**
 
 ## 💡 Tips
 
-1. **Always use the virtual environment** - Activate it before running any commands
-2. **Keep TailwindCSS watch running** - During development for instant CSS updates
+1. **Always use the virtual environment** - Activate it before running any Python commands
+2. **Keep TailwindCSS watch running** - Run `npm run dev` in `theme/static_src/` during development for instant CSS updates
 3. **Customize early** - Run the rename script before making changes
 4. **Check migrations** - Run `makemigrations` and `migrate` after model changes
 5. **Use the admin panel** - Access at `/admin` for easy data management
+6. **Two terminals for development** - One for `npm run dev`, another for `python manage.py runserver`
 
 ## 🆘 Troubleshooting
 
-### TailwindCSS not updating
-- Make sure the watch command is running
-- Check that you're editing `input.css`, not `dist/styles.css`
+### TailwindCSS not loading or updating
+- Make sure you've run `npm install` in the `theme/static_src/` directory
+- Run `npm run build` to generate the CSS file
+- During development, run `npm run dev` to watch for changes
+- Check that you're editing `theme/static_src/src/styles.css`, not the compiled output
+- Verify the compiled CSS exists at `theme/static/css/dist/styles.css`
+- Check browser console for 404 errors on CSS file
 
 ### Database errors
 - **SQLite**: Delete `db.sqlite3` and run migrations again
