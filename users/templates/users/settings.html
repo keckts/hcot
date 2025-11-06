@@ -110,16 +110,21 @@
                                                         <p class="text-xs text-black mt-1 dark:text-black">Please verify your email address to access all features</p>
                                                     </div>
                                                 </div>
-                                                <form method="post" action="{% url 'account_email' %}" class="flex gap-2">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="action_send" value="{{ user.emailaddress_set.all.0.id }}">
-                                                    <button type="submit" class="btn btn-sm btn-warning gap-2">
+                                                <div x-data="resendEmailVerification()" x-init="init()">
+                                                    <button
+                                                        type="button"
+                                                        @click="sendVerificationCode()"
+                                                        class="btn btn-sm btn-warning gap-2"
+                                                        :disabled="cooldownActive"
+                                                        :class="{ 'btn-disabled opacity-50 cursor-not-allowed': cooldownActive }"
+                                                    >
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                                         </svg>
-                                                        Resend Verification Email
+                                                        <span x-show="!cooldownActive">Verify Email</span>
+                                                        <span x-show="cooldownActive" x-text="`Wait ${cooldownSeconds}s`"></span>
                                                     </button>
-                                                </form>
+                                                </div>
                                             </div>
                                         {% endif %}
                                     </div>
@@ -291,14 +296,17 @@
             <form method="dialog" class="flex gap-2">
                 <button class="btn btn-ghost">Cancel</button>
             </form>
-            <a href="{% url 'users:logout' %}" class="btn btn-warning">
+            <form method="post" action="{% url 'users:logout' %}">
+              {% csrf_token %}
+            <button class="btn btn-warning" type="submit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
                 Yes, Logout
-            </a>
+            </button>
+            </form>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
@@ -354,5 +362,237 @@
         <button>close</button>
     </form>
 </dialog>
+
+<!-- Email Verification Modal -->
+<dialog id="email_verification_modal" class="modal" x-data="verificationModal()">
+    <div class="modal-box max-w-md">
+        <h3 class="font-bold text-2xl flex items-center gap-3 mb-4">
+            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            Verify Your Email
+        </h3>
+
+        <p class="text-base-content/70 mb-6">
+            We've sent a 6-digit verification code to your email. Enter it below to verify your email address.
+        </p>
+
+        <!-- Code Input -->
+        <div class="form-control mb-4">
+            <label class="label">
+                <span class="label-text font-medium">Verification Code</span>
+            </label>
+            <input
+                type="text"
+                x-model="code"
+                @input="code = code.replace(/[^0-9]/g, '').slice(0, 6)"
+                @keypress.enter="verifyCode()"
+                maxlength="6"
+                placeholder="000000"
+                class="input input-bordered input-lg text-center text-2xl tracking-widest font-mono"
+                :class="{ 'input-error': errorMessage }"
+                autofocus
+            />
+            <label class="label" x-show="errorMessage">
+                <span class="label-text-alt text-error" x-text="errorMessage"></span>
+            </label>
+        </div>
+
+        <!-- Success Message -->
+        <div x-show="successMessage" class="alert alert-success mb-4" x-transition>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span x-text="successMessage"></span>
+        </div>
+
+        <div class="modal-action flex gap-2">
+            <button
+                type="button"
+                class="btn btn-ghost flex-1"
+                @click="closeModal()"
+                :disabled="isVerifying"
+            >
+                Cancel
+            </button>
+            <button
+                type="button"
+                class="btn btn-primary flex-1"
+                @click="verifyCode()"
+                :disabled="code.length !== 6 || isVerifying"
+                :class="{ 'loading': isVerifying }"
+            >
+                <span x-show="!isVerifying">Verify</span>
+                <span x-show="isVerifying">Verifying...</span>
+            </button>
+        </div>
+
+        <p class="text-xs text-base-content/60 text-center mt-4">
+            Didn't receive the code? Check your spam folder or wait for the cooldown to request a new one.
+        </p>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button type="button" @click="closeModal()">close</button>
+    </form>
+</dialog>
+
+
+<script>
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+window.resendEmailVerification = function () {
+    return {
+        cooldownActive: false,
+        cooldownSeconds: 60,
+        intervalId: null,
+
+        init() {
+            const cooldownEnd = localStorage.getItem('emailVerificationCooldown');
+            if (cooldownEnd) {
+                const endTime = new Date(cooldownEnd);
+                const now = new Date();
+                const remaining = Math.ceil((endTime - now) / 1000);
+
+                if (remaining > 0) {
+                    this.cooldownSeconds = remaining;
+                    this.startCooldown();
+                } else {
+                    localStorage.removeItem('emailVerificationCooldown');
+                }
+            }
+        },
+
+        async sendVerificationCode() {
+            if (this.cooldownActive) return;
+
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const response = await fetch("{% url 'users:resend_verification' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show toast notification
+                    window.showToast?.(data.message, 'success');
+
+                    // Activate cooldown
+                    this.activateCooldown();
+
+                    // Open verification modal
+                    document.getElementById('email_verification_modal').showModal();
+                } else {
+                    window.showToast?.(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error sending verification code:', error);
+                window.showToast?.('Failed to send verification code. Please try again.', 'error');
+            }
+        },
+
+        activateCooldown() {
+            const endTime = new Date();
+            endTime.setSeconds(endTime.getSeconds() + 60);
+            localStorage.setItem('emailVerificationCooldown', endTime.toISOString());
+
+            this.cooldownSeconds = 60;
+            this.startCooldown();
+        },
+
+        startCooldown() {
+            this.cooldownActive = true;
+            this.intervalId = setInterval(() => {
+                this.cooldownSeconds--;
+                if (this.cooldownSeconds <= 0) this.stopCooldown();
+            }, 1000);
+        },
+
+        stopCooldown() {
+            clearInterval(this.intervalId);
+            this.cooldownActive = false;
+            this.cooldownSeconds = 60;
+            localStorage.removeItem('emailVerificationCooldown');
+        }
+    };
+};
+
+window.verificationModal = function () {
+    return {
+        code: '',
+        errorMessage: '',
+        successMessage: '',
+        isVerifying: false,
+
+        async verifyCode() {
+            if (this.code.length !== 6 || this.isVerifying) return;
+
+            this.isVerifying = true;
+            this.errorMessage = '';
+            this.successMessage = '';
+
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const formData = new FormData();
+                formData.append('code', this.code);
+
+                const response = await fetch("{% url 'users:verify_email_code' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.successMessage = data.message;
+
+                    // Wait 1 second then close modal and reload page
+                    setTimeout(() => {
+                        this.closeModal();
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    this.errorMessage = data.message;
+                }
+            } catch (error) {
+                console.error('Error verifying code:', error);
+                this.errorMessage = 'Failed to verify code. Please try again.';
+            } finally {
+                this.isVerifying = false;
+            }
+        },
+
+        closeModal() {
+            this.code = '';
+            this.errorMessage = '';
+            this.successMessage = '';
+            this.isVerifying = false;
+            document.getElementById('email_verification_modal').close();
+        }
+    };
+};
+</script>
+
 
 {% endblock %}

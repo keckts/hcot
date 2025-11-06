@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}hcot{% endblock %}</title>
+    <title>{% block title %}{{project_name}}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {% tailwind_css %}
@@ -74,7 +74,15 @@
 
     </div>
   </div>
+
+
+
 </div>
+
+
+
+</body>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -114,7 +122,5 @@
     {% endif %}
   });
 </script>
-
-</body>
 </html>
 

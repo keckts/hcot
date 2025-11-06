@@ -77,6 +77,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",  # Required for allauth
+                "core.context_processors.global_context",
             ],
             "loaders": [
                 (
@@ -283,3 +284,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # Make cookies only accessible via HTTP(S), not JavaScript (recommended)
 SESSION_COOKIE_HTTPONLY = True
+
+PROJECT_NAME = config(
+    "PROJECT_NAME", default="hcot"
+)  # change to whatever you want, this is mostly used for frontend
