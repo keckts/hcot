@@ -73,7 +73,7 @@
                                     Account Details
                                 </h3>
 
-                                <!-- Email (Read-only) -->
+                                <!-- Email (Read-only) with Verification Status -->
                                 <div class="form-control mb-4">
                                     <label class="label">
                                         <span class="label-text font-medium">Email</span>
@@ -84,6 +84,45 @@
                                         class="input input-bordered w-full input-disabled"
                                         disabled
                                     />
+
+                                    <!-- Email Verification Status -->
+                                    <div class="mt-3">
+                                        {% if user.emailaddress_set.all.0.verified %}
+                                            <!-- Email Verified Badge -->
+                                            <div class="flex items-center gap-2 p-3 bg-green-50 border-2 border-green-500 rounded-lg">
+                                                <svg class="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-green-900">Email Verified</p>
+                                                    <p class="text-xs text-green-700">Your email address has been confirmed</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <!-- Email Not Verified Alert -->
+                                            <div class="flex flex-col gap-3 p-4 bg-yellow-50 border-2 border-yellow-500 rounded-lg">
+                                                <div class="flex items-start gap-3">
+                                                    <svg class="w-6 h-6 text-black flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                    </svg>
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-semibold text-black">Email Not Verified</p>
+                                                        <p class="text-xs text-black mt-1 dark:text-black">Please verify your email address to access all features</p>
+                                                    </div>
+                                                </div>
+                                                <form method="post" action="{% url 'account_email' %}" class="flex gap-2">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action_send" value="{{ user.emailaddress_set.all.0.id }}">
+                                                    <button type="submit" class="btn btn-sm btn-warning gap-2">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        Resend Verification Email
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </div>
 
                                 <!-- First Name -->

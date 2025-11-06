@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # third party
     "django_cotton",
     "django_viewcomponent",
+    "jazzmin",
     # allauth
     "allauth",
     "allauth.account",
@@ -207,12 +208,16 @@ AUTHENTICATION_BACKENDS = [
 # Django Allauth Settings (Updated for latest version)
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
-ACCOUNT_EMAIL_VERIFICATION = (
-    "optional"  # or "mandatory" if you want to require email verification
-)
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_SESSION_REMEMBER = True
+
+# Email Verification Settings
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Require email verification for all users
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True  # Auto-login after email confirmation
+ACCOUNT_UNIQUE_EMAIL = True  # Ensure emails are unique
+ACCOUNT_SESSION_REMEMBER = True  # Remember user sessions
+
+# Prevent login until email is verified
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/dashboard/"
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/auth/login/"
 
 # Redirect URLs
 LOGIN_URL = "/auth/login/"
