@@ -4,6 +4,8 @@
 
 Created by Henry Sheffield, this boilerplate provides a solid foundation for building modern web applications with Django, featuring email-based authentication, user profile management, and beautiful UI components.
 
+Extra guides can be found in the guides directory if needed.
+
 ## ✨ Features
 
 - 🔐 **Email-Based Authentication** - Modern signup/login with email instead of username

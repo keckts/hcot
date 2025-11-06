@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     "theme",
     # apps
     "core",
-    "components",
     "users",
     # third party
     "django_cotton",
@@ -220,9 +219,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Django Allauth Settings (Updated for latest version)
-ACCOUNT_AUTHENTICATION_METHOD = config(
-    "ACCOUNT_AUTHENTICATION_METHOD", default="email"
-)
+ACCOUNT_AUTHENTICATION_METHOD = config("ACCOUNT_AUTHENTICATION_METHOD", default="email")
 ACCOUNT_LOGIN_METHODS = {ACCOUNT_AUTHENTICATION_METHOD}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_USERNAME_REQUIRED = config(
@@ -260,7 +257,9 @@ LOGIN_URL = config("LOGIN_URL", default="/auth/login/")
 LOGIN_REDIRECT_URL = config("LOGIN_REDIRECT_URL", default="/dashboard/")
 LOGOUT_REDIRECT_URL = config("LOGOUT_REDIRECT_URL", default="/")
 ACCOUNT_LOGOUT_REDIRECT_URL = config("ACCOUNT_LOGOUT_REDIRECT_URL", default="/")
-ACCOUNT_SIGNUP_REDIRECT_URL = config("ACCOUNT_SIGNUP_REDIRECT_URL", default="/dashboard/")
+ACCOUNT_SIGNUP_REDIRECT_URL = config(
+    "ACCOUNT_SIGNUP_REDIRECT_URL", default="/dashboard/"
+)
 
 # Google OAuth Settings
 GOOGLE_OAUTH_SCOPES = config("GOOGLE_OAUTH_SCOPES", default="profile,email", cast=Csv())
