@@ -378,10 +378,11 @@
         </p>
 
         <!-- Code Input -->
-        <div class="form-control mb-4">
+        <div class="form-control mb-4 justify-center gap-2">
             <label class="label">
                 <span class="label-text font-medium">Verification Code</span>
             </label>
+            <br>
             <input
                 type="text"
                 x-model="code"
@@ -437,6 +438,9 @@
 </dialog>
 
 
+
+
+
 <script>
 // Get CSRF token
 function getCookie(name) {
@@ -457,7 +461,7 @@ function getCookie(name) {
 window.resendEmailVerification = function () {
     return {
         cooldownActive: false,
-        cooldownSeconds: 60,
+        cooldownSeconds: 1,
         intervalId: null,
 
         init() {
@@ -523,7 +527,7 @@ window.resendEmailVerification = function () {
             this.intervalId = setInterval(() => {
                 this.cooldownSeconds--;
                 if (this.cooldownSeconds <= 0) this.stopCooldown();
-            }, 1000);
+            }, 500);
         },
 
         stopCooldown() {

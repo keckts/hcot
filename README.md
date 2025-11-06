@@ -7,16 +7,19 @@ Created by Henry Sheffield, this boilerplate provides a solid foundation for bui
 ## ✨ Features
 
 - 🔐 **Email-Based Authentication** - Modern signup/login with email instead of username
+- ✉️ **Email Verification System** - 6-digit code verification with beautiful modal interface
 - 👤 **User Profile Management** - Complete profile editing with bio, location, and birth date
 - 🎨 **Beautiful UI** - TailwindCSS + DaisyUI for stunning, responsive design
 - ⚡ **HTMX Integration** - Dynamic, modern interactions without writing JavaScript
 - 🎭 **Django Cotton** - Component-based templating for cleaner code
 - 🌓 **Dark Mode** - Built-in dark mode toggle that persists across sessions
-- 🔒 **Security First** - CSRF protection, secure password handling, and more
+- 🔒 **Security First** - CSRF protection, secure password handling, rate limiting
 - 📱 **Fully Responsive** - Works beautifully on all devices
 - 🗑️ **Account Management** - Delete account functionality with confirmation modals
 - ⚙️ **Settings Page** - Comprehensive user settings with profile editing
 - 📊 **Dashboard** - Beautiful user dashboard with stats and quick actions
+- 🎯 **Highly Configurable** - Extensive .env customization without code changes
+- 🗄️ **Dual Database Support** - Easy switch between SQLite and PostgreSQL
 
 ## 🚀 Quick Start
 
@@ -159,12 +162,188 @@ python rename_project.py mynewproject
 
 ### Environment Variables
 
-For production, create a `.env` file (see `.env.example`):
+This boilerplate is **highly customizable** through environment variables. All configuration is done via the `.env` file, making it easy to adapt the project to your needs without touching the code.
 
+#### Quick Setup
+
+1. **Copy the example file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit `.env` and customize your settings:**
+   ```bash
+   nano .env  # or use your favorite editor
+   ```
+
+3. **Key settings to update:**
+   - `PROJECT_NAME` - Your project name (appears in templates, emails)
+   - `SECRET_KEY` - Generate with: `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`
+   - `DEBUG` - Set to `False` for production
+   - `ALLOWED_HOSTS` - Your domain names (comma-separated)
+
+#### Complete Configuration Reference
+
+The `.env.example` file includes comprehensive documentation for all available settings. Here's an overview:
+
+##### 🏗️ Core Settings
 ```env
-SECRET_KEY=your-secret-key-here
+PROJECT_NAME=myproject               # Project name used throughout the app
+SECRET_KEY=your-secret-key          # Django secret key (keep secure!)
+DEBUG=True                          # Debug mode (False for production)
+ALLOWED_HOSTS=localhost,127.0.0.1  # Allowed hosts (comma-separated)
+```
+
+##### 🗄️ Database Configuration
+```env
+DATABASE_ENGINE=sqlite3             # sqlite3 or postgresql
+# PostgreSQL settings (when DATABASE_ENGINE=postgresql)
+DATABASE_NAME=myproject_db
+DATABASE_USER=myuser
+DATABASE_PASSWORD=mypassword
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+```
+
+##### 📧 Email Configuration
+```env
+# SMTP Settings
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=noreply@yourdomain.com
+
+# Email Verification Settings
+EMAIL_VERIFICATION_CODE_EXPIRY=10   # Code expiry in minutes
+EMAIL_VERIFICATION_COOLDOWN=60      # Cooldown between requests in seconds
+```
+
+##### 🔐 Authentication Settings
+```env
+ACCOUNT_AUTHENTICATION_METHOD=email  # email, username, or username_email
+ACCOUNT_USERNAME_REQUIRED=False      # Require username during signup
+ACCOUNT_EMAIL_VERIFICATION=mandatory # none, optional, or mandatory
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION=True
+ACCOUNT_UNIQUE_EMAIL=True
+ACCOUNT_SESSION_REMEMBER=True
+```
+
+##### 🔒 Session Configuration
+```env
+SESSION_COOKIE_AGE=1209600           # 2 weeks in seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE=False
+SESSION_COOKIE_HTTPONLY=True
+```
+
+##### 🌐 Google OAuth (Optional)
+```env
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_OAUTH_SCOPES=profile,email
+GOOGLE_OAUTH_ACCESS_TYPE=online
+```
+
+##### 🔗 URL Configuration
+```env
+LOGIN_URL=/auth/login/
+LOGIN_REDIRECT_URL=/dashboard/
+LOGOUT_REDIRECT_URL=/
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL=/dashboard/
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL=/auth/login/
+ACCOUNT_SIGNUP_REDIRECT_URL=/dashboard/
+```
+
+##### 🔑 Password Validation
+```env
+PASSWORD_MIN_LENGTH=8                # Minimum password length
+PASSWORD_REQUIRE_NUMERIC=True        # Require numeric characters
+```
+
+##### 🎨 Styling Configuration
+```env
+TAILWIND_APP_NAME=theme              # Tailwind CSS app name
+```
+
+##### 🛡️ Security Settings (Production)
+```env
+# Uncomment these for production:
+# SECURE_SSL_REDIRECT=True
+# SESSION_COOKIE_SECURE=True
+# CSRF_COOKIE_SECURE=True
+# SECURE_HSTS_SECONDS=31536000
+```
+
+##### 📊 Third-Party Integrations (Optional)
+```env
+# Sentry Error Tracking
+# SENTRY_DSN=your-sentry-dsn
+
+# AWS S3 Storage
+# AWS_ACCESS_KEY_ID=your-access-key
+# AWS_SECRET_ACCESS_KEY=your-secret-key
+# AWS_STORAGE_BUCKET_NAME=your-bucket
+
+# Redis Cache
+# REDIS_URL=redis://localhost:6379/0
+```
+
+#### Environment-Specific Configurations
+
+**Development (.env):**
+```env
+PROJECT_NAME=myproject
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_ENGINE=sqlite3
+EMAIL_VERIFICATION_CODE_EXPIRY=10
+```
+
+**Production (.env):**
+```env
+PROJECT_NAME=MyProject
 DEBUG=False
-ALLOWED_HOSTS=yourdomain.com
+ALLOWED_HOSTS=example.com,www.example.com
+DATABASE_ENGINE=postgresql
+DATABASE_NAME=production_db
+# ... other production settings
+SECURE_SSL_REDIRECT=True
+SESSION_COOKIE_SECURE=True
+```
+
+#### 📝 Important Notes
+
+- ⚠️ **Never commit your `.env` file** to version control
+- ✅ `.env.example` is safe to commit (contains no secrets)
+- 🔒 Keep `SECRET_KEY` secure and unique per environment
+- 📧 In DEBUG mode, emails print to console (no SMTP needed)
+- 🔄 After changing settings, restart the development server
+- 💾 Changes to some settings may require migrations
+
+#### 🎯 Customization Examples
+
+**Change project name everywhere:**
+```env
+PROJECT_NAME=MyAwesomeProject
+```
+This updates the name in templates, emails, and the UI.
+
+**Adjust email verification timing:**
+```env
+EMAIL_VERIFICATION_CODE_EXPIRY=5    # Codes expire in 5 minutes
+EMAIL_VERIFICATION_COOLDOWN=30      # Can resend after 30 seconds
+```
+
+**Switch authentication methods:**
+```env
+ACCOUNT_AUTHENTICATION_METHOD=username_email  # Allow both
+ACCOUNT_USERNAME_REQUIRED=True
+```
+
+**Disable email verification:**
+```env
+ACCOUNT_EMAIL_VERIFICATION=none
 ```
 
 ### Database Configuration

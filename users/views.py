@@ -138,18 +138,21 @@ class DeleteAccountView(LoginRequiredMixin, View):
 
 class ResendVerificationEmailView(LoginRequiredMixin, View):
     """
-    Send 6-digit verification code via email with rate limiting (60 seconds cooldown).
+    Send 6-digit verification code via email with rate limiting.
 
     Security features:
-    - Rate limiting: 60-second cooldown between requests
+    - Rate limiting: cooldown between requests (configurable via .env)
     - User authentication required
     - Only sends if email is unverified
-    - 6-digit code stored in session with expiry
+    - 6-digit code stored in session with expiry (configurable via .env)
     - CSRF protection enabled
     """
 
-    COOLDOWN_SECONDS = 60
-    CODE_EXPIRY_MINUTES = 10
+    # Get settings from Django settings (which reads from .env)
+    from django.conf import settings
+
+    COOLDOWN_SECONDS = settings.EMAIL_VERIFICATION_COOLDOWN
+    CODE_EXPIRY_MINUTES = settings.EMAIL_VERIFICATION_CODE_EXPIRY
     success_url = reverse_lazy("users:settings")
 
     def post(self, request, *args, **kwargs):
@@ -253,7 +256,10 @@ class VerifyEmailCodeView(LoginRequiredMixin, View):
     Verify the 6-digit email verification code.
     """
 
-    CODE_EXPIRY_MINUTES = 10
+    # Get settings from Django settings (which reads from .env)
+    from django.conf import settings
+
+    CODE_EXPIRY_MINUTES = settings.EMAIL_VERIFICATION_CODE_EXPIRY
 
     def post(self, request, *args, **kwargs):
         """Handle POST request to verify code."""
